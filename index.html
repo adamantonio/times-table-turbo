@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Times Table Turbo</title>
+  <meta name="description" content="A stress-free game to master your times tables up to 12x12.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body>
+
+  <!-- ============ START SCREEN ============ -->
+  <div id="start-screen" class="screen active">
+    <div class="container">
+      <h1 class="title">Times Table<br><span class="title-accent">Turbo</span></h1>
+      <p class="subtitle">Pick a table to practise, or go mixed!</p>
+
+      <div class="table-grid">
+        <button class="table-btn" data-table="1">1</button>
+        <button class="table-btn" data-table="2">2</button>
+        <button class="table-btn" data-table="3">3</button>
+        <button class="table-btn" data-table="4">4</button>
+        <button class="table-btn" data-table="5">5</button>
+        <button class="table-btn" data-table="6">6</button>
+        <button class="table-btn" data-table="7">7</button>
+        <button class="table-btn" data-table="8">8</button>
+        <button class="table-btn" data-table="9">9</button>
+        <button class="table-btn" data-table="10">10</button>
+        <button class="table-btn" data-table="11">11</button>
+        <button class="table-btn" data-table="12">12</button>
+      </div>
+
+      <button class="mixed-btn" data-table="mixed">Mixed 🎲</button>
+      <button class="stats-btn" id="open-stats-btn">View Stats 📊</button>
+    </div>
+  </div>
+
+  <!-- ============ GAME SCREEN ============ -->
+  <div id="game-screen" class="screen">
+    <div class="container game-container">
+      <div class="game-header">
+        <button class="back-btn" id="back-btn">✕</button>
+        <div class="progress" id="progress">1 / 15</div>
+      </div>
+
+      <div class="question-area">
+        <div class="question" id="question">7 × 3 =</div>
+        <div class="answer-display" id="answer-display">&nbsp;</div>
+      </div>
+
+      <!-- Feedback overlay -->
+      <div class="feedback-overlay" id="feedback-overlay">
+        <div class="feedback-icon" id="feedback-icon"></div>
+        <div class="feedback-text" id="feedback-text"></div>
+      </div>
+
+      <div class="numpad">
+        <button class="num-btn" data-num="1">1</button>
+        <button class="num-btn" data-num="2">2</button>
+        <button class="num-btn" data-num="3">3</button>
+        <button class="num-btn" data-num="4">4</button>
+        <button class="num-btn" data-num="5">5</button>
+        <button class="num-btn" data-num="6">6</button>
+        <button class="num-btn" data-num="7">7</button>
+        <button class="num-btn" data-num="8">8</button>
+        <button class="num-btn" data-num="9">9</button>
+        <button class="num-btn action-btn backspace-btn" data-action="backspace">⌫</button>
+        <button class="num-btn" data-num="0">0</button>
+        <button class="num-btn action-btn enter-btn" data-action="enter">Go</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RESULTS SCREEN ============ -->
+  <div id="results-screen" class="screen">
+    <div class="container results-container">
+      <h2 class="results-title" id="results-title">🎉 Round Complete!</h2>
+      <div class="results-score" id="results-score"></div>
+      <div class="results-details" id="results-details"></div>
+      <button class="mixed-btn" id="play-again-btn">Play Again</button>
+      <button class="stats-btn" id="results-stats-btn">View Stats 📊</button>
+    </div>
+  </div>
+
+  <!-- ============ STATS POPUP ============ -->
+  <div class="modal-overlay" id="stats-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Confidence Grid</h2>
+        <button class="modal-close" id="close-stats-btn">✕</button>
+      </div>
+      <p class="modal-subtitle">Colour shows your confidence for each question</p>
+      <div class="grid-wrapper">
+        <table class="stats-grid" id="stats-grid"></table>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:#555"></span>No data</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#ef4444"></span>Low</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#eab308"></span>Mid</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#22c55e"></span>High</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">Made with 💖 for E by D</footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

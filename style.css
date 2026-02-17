@@ -55,6 +55,13 @@ body {
   justify-content: center;
 }
 
+#game-screen.active {
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 .container {
   width: 100%;
   max-width: 420px;
@@ -161,15 +168,15 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: calc(100vh - 80px);
   justify-content: space-between;
+  padding: 12px 0;
 }
 
 .game-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .back-btn {
@@ -203,13 +210,13 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 20px 0;
+  min-height: 0;
 }
 
 .question {
   font-size: 2.8rem;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   letter-spacing: -0.5px;
 }
 

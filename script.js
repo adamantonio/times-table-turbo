@@ -12,19 +12,19 @@
   const EMA_ALPHA = 0.3; // exponential moving average weight
 
   // ---- DOM refs ----
-  const $startScreen   = document.getElementById('start-screen');
-  const $gameScreen    = document.getElementById('game-screen');
+  const $startScreen = document.getElementById('start-screen');
+  const $gameScreen = document.getElementById('game-screen');
   const $resultsScreen = document.getElementById('results-screen');
-  const $progress      = document.getElementById('progress');
-  const $question      = document.getElementById('question');
+  const $progress = document.getElementById('progress');
+  const $question = document.getElementById('question');
   const $answerDisplay = document.getElementById('answer-display');
   const $feedbackOverlay = document.getElementById('feedback-overlay');
-  const $feedbackIcon  = document.getElementById('feedback-icon');
-  const $feedbackText  = document.getElementById('feedback-text');
-  const $statsModal    = document.getElementById('stats-modal');
-  const $statsGrid     = document.getElementById('stats-grid');
-  const $resultsTitle  = document.getElementById('results-title');
-  const $resultsScore  = document.getElementById('results-score');
+  const $feedbackIcon = document.getElementById('feedback-icon');
+  const $feedbackText = document.getElementById('feedback-text');
+  const $statsModal = document.getElementById('stats-modal');
+  const $statsGrid = document.getElementById('stats-grid');
+  const $resultsTitle = document.getElementById('results-title');
+  const $resultsScore = document.getElementById('results-score');
   const $resultsDetails = document.getElementById('results-details');
 
   // ---- Game state ----
@@ -53,10 +53,7 @@
   }
 
   function statKey(a, b) {
-    // Always store in canonical order so 3×7 and 7×3 map to the same cell
-    const lo = Math.min(a, b);
-    const hi = Math.max(a, b);
-    return `${lo}_${hi}`;
+    return `${a}_${b}`;
   }
 
   /**
@@ -219,8 +216,8 @@
     const correctCount = roundResults.filter(r => r.correct).length;
     $resultsTitle.textContent =
       correctCount === TOTAL_QUESTIONS ? '🌟 Perfect Round!' :
-      correctCount >= 12 ? '🎉 Amazing!' :
-      correctCount >= 8 ? '👏 Great Job!' : '💪 Keep Practising!';
+        correctCount >= 12 ? '🎉 Amazing!' :
+          correctCount >= 8 ? '👏 Great Job!' : '💪 Keep Practising!';
 
     $resultsScore.textContent = `${correctCount} / ${TOTAL_QUESTIONS}`;
 
@@ -266,24 +263,31 @@
     for (let c = 1; c <= 12; c++) html += `<th>${c}</th>`;
     html += '</tr>';
 
+    let hasAnyScore = false;
+
     for (let r = 1; r <= 12; r++) {
       html += `<tr><th>${r}</th>`;
       for (let c = 1; c <= 12; c++) {
         const key = statKey(r, c);
         const s = stats[key];
-        if (s) {
+        if (s && s.attempts >= 5) {
+          hasAnyScore = true;
           const val = Math.round(s.confidence);
           const bg = confidenceColor(val);
           const textColor = val > 55 ? '#111' : '#fff';
-          html += `<td style="background:${bg};color:${textColor}" title="${r}×${c}: ${val}%">${val}</td>`;
+          html += `<td style="background:${bg};color:${textColor}" title="${r}×${c}: ${val}% (${s.attempts} attempts)">${val}</td>`;
         } else {
-          html += `<td style="background:#333;color:#777" title="${r}×${c}: no data">–</td>`;
+          const tip = s ? `${r}×${c}: ${s.attempts}/5 attempts` : `${r}×${c}: no data`;
+          html += `<td style="background:#333;color:#777" title="${tip}">–</td>`;
         }
       }
       html += '</tr>';
     }
 
     $statsGrid.innerHTML = html;
+
+    const $emptyMsg = document.getElementById('grid-empty-msg');
+    $emptyMsg.classList.toggle('visible', !hasAnyScore);
   }
 
   function openStats() {

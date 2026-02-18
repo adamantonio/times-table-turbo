@@ -9,7 +9,9 @@
   const TOTAL_QUESTIONS = 15;
   const MAX_DIGITS = 3; // max 144
   const STORAGE_KEY = 'timesTableTurboStats';
+  const HISTORY_KEY = 'timesTableTurboHistory';
   const EMA_ALPHA = 0.3; // exponential moving average weight
+  const MAX_HISTORY = 5;
 
   // ---- DOM refs ----
   const $startScreen = document.getElementById('start-screen');
@@ -35,6 +37,7 @@
   let roundResults = [];  // { a, b, correct, userAnswer, timeTaken }
   let feedbackTimeout = null;
   let isShowingFeedback = false;
+  let currentTable = 'mixed';
 
   // =============================================
   //  STATS / LOCALSTORAGE
@@ -147,6 +150,7 @@
   // =============================================
 
   function startGame(table) {
+    currentTable = table;
     questions = generateQuestions(table);
     currentIndex = 0;
     roundResults = [];
@@ -232,6 +236,9 @@
     }
 
     showScreen($resultsScreen);
+
+    // Save game to history
+    saveGameHistory(currentTable, correctCount, TOTAL_QUESTIONS);
   }
 
   // =============================================
@@ -290,8 +297,68 @@
     $emptyMsg.classList.toggle('visible', !hasAnyScore);
   }
 
+  // =============================================
+  //  GAME HISTORY
+  // =============================================
+
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (_) { /* corrupted */ }
+    return [];
+  }
+
+  function saveGameHistory(mode, correctCount, total) {
+    const history = loadHistory();
+    history.unshift({
+      date: new Date().toISOString(),
+      mode: mode,
+      correct: correctCount,
+      total: total
+    });
+    // Keep only the most recent games
+    while (history.length > MAX_HISTORY) history.pop();
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }
+
+  function formatRelativeDate(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.round((startOfToday - startOfDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    return `${diffDays} days ago`;
+  }
+
+  function formatMode(mode) {
+    return mode === 'mixed' ? 'Mixed' : `${mode}× table`;
+  }
+
+  function renderRecentGames() {
+    const history = loadHistory();
+    const $container = document.getElementById('recent-games');
+
+    if (history.length === 0) {
+      $container.innerHTML = '<h3>Recent Games</h3><p class="recent-games-empty">No games played yet.</p>';
+      return;
+    }
+
+    let html = '<h3>Recent Games</h3>';
+    html += '<table class="recent-games-table"><tr><th>When</th><th>Mode</th><th>Score</th></tr>';
+    for (const game of history) {
+      html += `<tr><td>${formatRelativeDate(game.date)}</td><td>${formatMode(game.mode)}</td><td>${game.correct}/${game.total}</td></tr>`;
+    }
+    html += '</table>';
+    $container.innerHTML = html;
+  }
+
   function openStats() {
     renderStatsGrid();
+    renderRecentGames();
     $statsModal.classList.add('open');
   }
 
